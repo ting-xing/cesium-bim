@@ -1,5 +1,13 @@
 import './style.css'
-import {Cartesian3, HeadingPitchRoll, Math, Transforms, Viewer} from "cesium";
+import {
+    Cartesian3,
+    HeadingPitchRoll,
+    Math,
+    ScreenSpaceEventHandler,
+    ScreenSpaceEventType,
+    Transforms,
+    Viewer
+} from "cesium";
 import Air from './assets/Cesium_Air.glb?url'
 
 const viewer = new Viewer('app', {
@@ -31,6 +39,20 @@ const entity = viewer.entities.add({
         maximumScale: 20000,
     },
 });
+
+// 创建屏幕空间事件处理器
+const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
+
+// 定义一个函数来处理单击事件
+const onEntityClicked: ScreenSpaceEventHandler.PositionedEventCallback = (movement) => {
+    const pickedObject = viewer.scene.pick(movement.position);
+    if (pickedObject && pickedObject.id === entity) {
+        alert('Entity clicked');
+    }
+}
+
+// 设置输入动作为鼠标左键单击
+handler.setInputAction(onEntityClicked, ScreenSpaceEventType.LEFT_CLICK);
 
 await viewer.zoomTo(entity)
 
